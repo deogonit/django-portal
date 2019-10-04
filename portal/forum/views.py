@@ -1,3 +1,10 @@
 from django.shortcuts import render
 
-# Create your views here.
+from .models import Board
+
+
+def board_view(request):
+    boards = Board.objects.all()
+    return render(request, 'forum/boards.html', context={
+        'boards': boards
+    })
