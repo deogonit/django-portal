@@ -3,26 +3,48 @@ from django.contrib.auth.models import User
 from django.utils.text import Truncator
 from django.db.models.signals import pre_save
 from portal.utils import unique_slug_generator
+from django.urls import reverse
 
 
 class Board(models.Model):
     name = models.CharField(max_length=30, unique=True)
     description = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('board_topics', kwargs={'slug': self.slug})
+
+    def get_number_of_topics(self):
+        board = Board.objects.get(slug=self.slug)
+        return len(board.topics.all())
+
+    def has_board_topics(self):
+        number = self.get_number_of_topics()
+        return True if number else False
+
+
+class Topic(models.Model):
+    name = models.CharField(max_length=255)
+    last_updated = models.DateTimeField(auto_now_add=True)
+    board = models.ForeignKey(Board, related_name="topics", on_delete=models.CASCADE)
+    who_started_topic = models.ForeignKey(User, related_name='topics', on_delete=models.CASCADE)
+    views = models.PositiveIntegerField(default=0)
+    slug = models.SlugField(unique=True, blank=True)
 
     def __str__(self):
         return self.name
 
 
-class Topic(models.Model):
-    subject = models.CharField(max_length=255)
-    last_updated = models.DateTimeField(auto_now_add=True)
-    board = models.ForeignKey(Board, related_name="topics", on_delete=models.CASCADE)
-    who_started_topic = models.ForeignKey(User, related_name='topics', on_delete=models.CASCADE)
-    views = models.PositiveIntegerField(default=0)
-    slug = models.SlugField(unique=True)
+def pre_save_slug(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance, instance.name, instance.slug)
 
-    def __str__(self):
-        return self.subject
+
+pre_save.connect(pre_save_slug, sender=Board)
+pre_save.connect(pre_save_slug, sender=Topic)
 
 
 class Post(models.Model):
@@ -36,11 +58,3 @@ class Post(models.Model):
     def __str__(self):
         truncated_message = Truncator(self.message)
         return truncated_message.chars(15)
-
-
-def slug_save(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance = unique_slug_generator(instance, instance.title, instance.slug)
-
-
-pre_save.connect(slug_save, sender=Topic)

@@ -1,0 +1,51 @@
+{% extends 'forum/base_forum.html'%}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'boards' %}">
+            Boards
+        </a>
+    </li>
+    <li class="breadcrumb-item active">{{ board.name }}</li>
+{% endblock %}
+
+{% block content %}
+{% if board.has_board_topics %}
+<table class="table table-striped">
+    <thead class="thead-inverse">
+        <tr>
+            <th>Topic</th>
+            <th>Starter</th>
+            <th>Replies</th>
+            <th>Views</th>
+            <th>Last update</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for topic in board.topics.all %}
+            <tr>
+                <td>
+                    <a href="">{{ topic.name }}</a>
+                    <small class="text-muted d-block"></small>
+                </td>
+                <td>
+                    {{ topic.who_started_topic.username }}
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    {{ topic.views }}
+                </td>
+                <td>
+                    {{ topic.last_updated }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+
+{% endif %}
+
+{% endblock %}

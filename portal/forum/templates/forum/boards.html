@@ -1,42 +1,38 @@
-{% extends 'base.html'%}
+{% extends 'forum/base_forum.html'%}
 
-{% block title %}
-    Forum
-{% endblock %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item active">Boards</li>
+      <li class="breadcrumb-item active">Boards</li>
 {% endblock %}
 
 {% block content %}
-
-    <table class="table table-striped">
-        <thead class="thead-inverse">
+<table class="table table-striped">
+    <thead class="thead-inverse">
+        <tr>
+            <th>Board</th>
+            <th>Posts</th>
+            <th>Topics</th>
+            <th>Last Post</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for board in boards %}
             <tr>
-                <th>Board</th>
-                <th>Posts</th>
-                <th>Topics</th>
-                <th>Last Post</th>
+                <td>
+                    <a href="{{ board.get_absolute_url }}">{{ board.name }}</a>
+                    <small class="text-muted d-block">{{ board.description }}</small>
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    0
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            {% for board in boards %}
-                <tr>
-                    <td>
-                        <a href="">{{ board.name }}</a>
-                        <small class="text-muted d-block">{{ board.description }}</small>
-                    </td>
-                    <td>
-                        0
-                    </td>
-                    <td>
-                        0
-                    </td>
-                    <td>
-                        0
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
