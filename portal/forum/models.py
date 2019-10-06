@@ -37,6 +37,9 @@ class Topic(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('topic_posts', kwargs={'slug': self.board.slug, 'topic_slug': self.slug})
+
 
 def pre_save_slug(sender, instance, *args, **kwargs):
     if not instance.slug:

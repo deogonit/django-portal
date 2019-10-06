@@ -6,7 +6,7 @@
             Boards
         </a>
     </li>
-    <li class="breadcrumb-item active">{{ board.name }}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{ board.name }}</li>
 {% endblock %}
 
 {% block content %}
@@ -25,7 +25,7 @@
         {% for topic in board.topics.all %}
             <tr>
                 <td>
-                    <a href="">{{ topic.name }}</a>
+                    <a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
                     <small class="text-muted d-block"></small>
                 </td>
                 <td>
@@ -47,5 +47,9 @@
 {% else %}
 
 {% endif %}
+
+<div class="mb-4">
+    <a href="{% url 'new_topic' board.slug %}" class="btn btn-primary">Start a new topic</a>
+</div>
 
 {% endblock %}

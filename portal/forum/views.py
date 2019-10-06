@@ -1,6 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from .models import Board
+from django.contrib.auth.models import User
+from .models import Board, Topic, Post
+from .forms import NewTopicForm
 
 
 class BoardView(View):
@@ -22,4 +24,50 @@ class BoardTopicsView(View):
         context = {
             'board': board
         }
+        return render(request, self.template_name, context)
+
+
+class TopicPostsView(View):
+    template_name = 'forum/topic_posts.html'
+
+    def get(self, request, *args, **kwargs):
+        topic = get_object_or_404(Topic,
+                                  board__slug=self.kwargs.get('slug'),
+                                  slug=self.kwargs.get('topic_slug')
+        )
+        posts = topic.posts.all()
+        context = {
+            'topic': topic,
+            'posts': posts
+        }
+        return render(request, self.template_name, context)
+
+
+class NewTopicView(View):
+    template_name = 'forum/new_topic.html'
+
+    def get(self, request, *args, **kwargs):
+        form = NewTopicForm()
+        board = get_object_or_404(Board, slug=self.kwargs.get('slug'))
+        context = {
+            'board': board,
+            'form': form
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        board = get_object_or_404(Board, slug=self.kwargs.get('slug'))
+        form = NewTopicForm(request.POST)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.board = board
+            topic.who_started_topic = request.user
+            topic.save()
+            post = Post.objects.create(
+                message=form.cleaned_data.get('message'),
+                topic=topic,
+                created_by=request.user
+            )
+            return redirect('board_topics', slug=board.slug)
+        context = {'board': board, 'form': form}
         return render(request, self.template_name, context)

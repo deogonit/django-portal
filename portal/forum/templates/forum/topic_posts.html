@@ -1,0 +1,44 @@
+{% extends 'forum/base_forum.html'%}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'boards' %}">
+            Boards
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ topic.board.get_absolute_url }}">
+           {{ topic.board.name }}
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+           {{ topic.name }}
+    </li>
+{% endblock %}
+
+{% block content %}
+{% for post in posts %}
+<div class="card mb-2 {% if forloop.first %} border-dark {% endif %}">
+    {% if forloop.first %}
+        <div class="card-header text-white bg-dark py-2 px-3">{{ topic.name }}</div>
+    {% endif %}
+        <div class="row">
+            <div class="col-2">
+               <!-- <img src="" alt="{{ post.created_by.username }}" class="w-100"> -->
+               <small>Posts: {{ post.created_by.posts.count }}</small>
+            </div>
+            <div class="col-10">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <strong class="text-muted">{{ post.created_by.username }}</strong>
+                    </div>
+                    <div class="col-6 text-right">
+                        <small class="text-muted">{{ post.created_at }}</small>
+                    </div>
+                </div>
+                {{ post.message }}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock%}

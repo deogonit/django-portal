@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse, resolve
 
 from ..models import Board
-from ..views import BoardView
+from ..views import BoardView, BoardTopicsView
 
 
 class BoardsTests(TestCase):
@@ -20,6 +20,10 @@ class BoardsTests(TestCase):
     def test_boards_view_uses_correct_template(self):
         response = self.client.get(reverse('boards'))
         self.assertTemplateUsed(response, 'forum/boards.html')
+
+    def test_boards_view_function(self):
+        view = resolve('/forum/')
+        self.assertEquals(view.func.view_class, BoardView)
 
 
 class BoardTopicsTest(TestCase):
@@ -41,3 +45,7 @@ class BoardTopicsTest(TestCase):
     def test_board_topics_view_uses_correct_template(self):
         response = self.client.get(reverse('board_topics', kwargs={'slug': self.slug}))
         self.assertTemplateUsed(response, 'forum/board_topics.html')
+
+    def test_boards_view_function(self):
+        view = resolve('/forum/boards/{}/'.format(self.slug))
+        self.assertEquals(view.func.view_class, BoardTopicsView)
