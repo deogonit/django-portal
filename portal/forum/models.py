@@ -40,6 +40,11 @@ class Topic(models.Model):
     def get_absolute_url(self):
         return reverse('topic_posts', kwargs={'slug': self.board.slug, 'topic_slug': self.slug})
 
+    def get_number_replies(self):
+        if self.posts.count() > 0:
+            return self.posts.count() - 1
+        return 0
+
 
 def pre_save_slug(sender, instance, *args, **kwargs):
     if not instance.slug:
