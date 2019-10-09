@@ -1,5 +1,7 @@
 {% extends 'forum/base_forum.html'%}
 
+{% load static %}
+
 {% block breadcrumb %}
     <li class="breadcrumb-item">
         <a href="{% url 'boards' %}">
@@ -24,8 +26,8 @@
     {% endif %}
         <div class="row">
             <div class="col-2">
-               <!-- <img src="" alt="{{ post.created_by.username }}" class="w-100"> -->
-               <small>Posts: {{ post.created_by.posts.count }}</small>
+                <img src="{% static 'img/empty-avatar.png' %}" alt="{{ post.created_by.username }}" class="w-100">
+                <small style="justify-content: center; display:grid;">Posts: {{ post.created_by.posts.count }}</small>
             </div>
             <div class="col-10">
                 <div class="row mb-3">
@@ -41,4 +43,9 @@
         </div>
     </div>
 {% endfor %}
+
+<div class="mb-4">
+    <a href="{% url 'reply_post' topic.board.slug topic.slug %}" class="btn btn-primary" role="button">Reply</a>
+</div>
+
 {% endblock%}

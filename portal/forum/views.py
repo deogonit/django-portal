@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 from .models import Board, Topic, Post
-from .forms import NewTopicForm
+from .forms import NewTopicForm, ReplyPostForm
 
 
 class BoardView(View):
@@ -34,7 +36,7 @@ class TopicPostsView(View):
         topic = get_object_or_404(Topic,
                                   board__slug=self.kwargs.get('slug'),
                                   slug=self.kwargs.get('topic_slug')
-        )
+                                  )
         posts = topic.posts.all()
         context = {
             'topic': topic,
@@ -70,4 +72,38 @@ class NewTopicView(View):
             )
             return redirect('board_topics', slug=board.slug)
         context = {'board': board, 'form': form}
+        return render(request, self.template_name, context)
+
+
+class ReplyPostView(View):
+    template_name = 'forum/reply_post.html'
+
+    def get(self, request, *args, **kwargs):
+        form = ReplyPostForm()
+        topic = get_object_or_404(Topic,
+                                  board__slug=self.kwargs.get('slug'),
+                                  slug=self.kwargs.get('topic_slug')
+                                  )
+        context = {
+            'topic': topic,
+            'form': form
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        topic = get_object_or_404(Topic, board__slug=self.kwargs.get('slug'),
+                                  slug=self.kwargs.get('topic_slug')
+                                  )
+        form = ReplyPostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.topic = topic
+            post.created_by = request.user
+            post.save()
+
+            topic.last_updated = timezone.now()
+            topic.save()
+
+            return redirect('topic_posts', slug=topic.board.slug, topic_slug=topic.slug)
+        context = {'topic': topic, 'form': form}
         return render(request, self.template_name, context)

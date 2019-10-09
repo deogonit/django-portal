@@ -26,3 +26,21 @@ class NewTopicForm(forms.ModelForm):
                 }
             ),
         }
+
+
+class ReplyPostForm(forms.ModelForm):
+    message = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'What is on your mind?'
+            }),
+        max_length=400,
+        help_text='The max length of  the text is 400'
+    )
+
+    class Meta:
+        model = Post
+        fields = [
+            'message',
+        ]
