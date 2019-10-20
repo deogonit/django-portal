@@ -28,7 +28,7 @@ class NewTopicForm(forms.ModelForm):
         }
 
 
-class ReplyPostForm(forms.ModelForm):
+class PostForm(forms.ModelForm):
     message = forms.CharField(
         widget=forms.Textarea(
             attrs={

@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'forum/base_forum.html'%}
+
+{% block title %}
+Edit post
+{% endblock%}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'boards' %}">
+            Boards
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ post.topic.board.get_absolute_url }}">
+            {{ post.topic.board.name }}
+        </a>
+    </li>
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ post.topic.get_absolute_url }}">
+            {{ post.topic.name }}
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Edit post
+    </li>
+{% endblock %}
+
+{% block content%}
+
+<form method="post" class="mb-4" novalidate>
+    {%csrf_token%}
+    {% include 'form.html' %}
+    <button type="submit" class="btn btn-success">
+        Save changes
+    </button>
+    <a href="{{ post.topic.get_absolute_url }}" class="btn btn-outline-secondary" role="button">
+        Cancel
+    </a>
+</form>
+
+{% endblock %}

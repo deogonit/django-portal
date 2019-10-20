@@ -66,3 +66,11 @@ class Post(models.Model):
     def __str__(self):
         truncated_message = Truncator(self.message)
         return truncated_message.chars(15)
+
+    def get_edit_url(self):
+        return reverse('edit_post',
+                       kwargs={'slug': self.topic.board.slug, 'topic_slug': self.topic.slug, 'post_number': self.pk})
+
+# TODO: 10. Add roles or permutation for group user
+# TODO: 11. Add Likes for posts and in future for news
+# TODO: 12. Add Comments system for news

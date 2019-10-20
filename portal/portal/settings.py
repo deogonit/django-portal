@@ -36,6 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+
+    # TODO: 4. ADD new app 'Accounts'
+    # TODO: 5. ADD new app 'Tags'
+    # TODO: 6. ADD new app 'News'
+
     'forum'
 ]
 

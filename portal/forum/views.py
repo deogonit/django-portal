@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 from .models import Board, Topic, Post
-from .forms import NewTopicForm, ReplyPostForm
+from .forms import NewTopicForm, PostForm
 
 
 class BoardView(View):
@@ -29,6 +29,10 @@ class BoardTopicsView(View):
         return render(request, self.template_name, context)
 
 
+# TODO: 3. For posts.html make a version for mobile (adaptive design)
+# TODO: 8. Make deleting posts for all users (topics and boards for admins or moderator)
+
+
 class TopicPostsView(View):
     template_name = 'forum/topic_posts.html'
 
@@ -37,10 +41,10 @@ class TopicPostsView(View):
                                   board__slug=self.kwargs.get('slug'),
                                   slug=self.kwargs.get('topic_slug')
                                   )
-        posts = topic.posts.all()
+        topic.views += 1
+        topic.save()
         context = {
-            'topic': topic,
-            'posts': posts
+            'topic': topic
         }
         return render(request, self.template_name, context)
 
@@ -79,11 +83,8 @@ class ReplyPostView(View):
     template_name = 'forum/reply_post.html'
 
     def get(self, request, *args, **kwargs):
-        form = ReplyPostForm()
-        topic = get_object_or_404(Topic,
-                                  board__slug=self.kwargs.get('slug'),
-                                  slug=self.kwargs.get('topic_slug')
-                                  )
+        form = PostForm()
+        topic = get_object_or_404(Topic, slug=self.kwargs.get('topic_slug'))
         context = {
             'topic': topic,
             'form': form
@@ -91,10 +92,8 @@ class ReplyPostView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        topic = get_object_or_404(Topic, board__slug=self.kwargs.get('slug'),
-                                  slug=self.kwargs.get('topic_slug')
-                                  )
-        form = ReplyPostForm(request.POST)
+        topic = get_object_or_404(Topic, slug=self.kwargs.get('topic_slug'))
+        form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.topic = topic
@@ -107,3 +106,31 @@ class ReplyPostView(View):
             return redirect('topic_posts', slug=topic.board.slug, topic_slug=topic.slug)
         context = {'topic': topic, 'form': form}
         return render(request, self.template_name, context)
+
+
+class EditPostView(View):
+    template_name = 'forum/edit_post.html'
+
+    def get(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, pk=self.kwargs.get('post_number'))
+        bound_form = PostForm(instance=post)
+        context = {
+            'form': bound_form,
+            'post': post
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        post = Post.objects.get(pk=self.kwargs.get('post_number'))
+        topic = Topic.objects.get(slug=self.kwargs.get('topic_slug'))
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.updated_at = timezone.now()
+            post.save()
+            topic.last_updated = timezone.now()
+            topic.save()
+            return redirect('topic_posts', slug=topic.board.slug, topic_slug=topic.slug)
+        context = {'post': post, 'form': form}
+        return render(request, self.template_name, context)
+

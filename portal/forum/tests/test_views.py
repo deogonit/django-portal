@@ -72,3 +72,6 @@ class TopicPosts(TestCase):
     def test_boards_view_function(self):
         view = resolve('/forum/boards/{}/topics/{}/'.format(self.board_slug, self.topic_slug))
         self.assertEquals(view.func.view_class, TopicPostsView)
+
+    # TODO: 1. Add test for creating models, forms and new views
+    # TODO: 2. Split tests into separate files
