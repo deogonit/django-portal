@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 from .models import Board, Topic, Post
 from .forms import NewTopicForm, PostForm
@@ -49,6 +50,7 @@ class TopicPostsView(View):
         return render(request, self.template_name, context)
 
 
+@method_decorator(login_required, name='dispatch')
 class NewTopicView(View):
     template_name = 'forum/new_topic.html'
 
@@ -79,6 +81,7 @@ class NewTopicView(View):
         return render(request, self.template_name, context)
 
 
+@method_decorator(login_required, name='dispatch')
 class ReplyPostView(View):
     template_name = 'forum/reply_post.html'
 
@@ -108,6 +111,7 @@ class ReplyPostView(View):
         return render(request, self.template_name, context)
 
 
+@method_decorator(login_required, name='dispatch')
 class EditPostView(View):
     template_name = 'forum/edit_post.html'
 

@@ -43,11 +43,15 @@
                     </div>
                 </div>
                 {{ post.message }}
-                <div class="mt-3">
-                    <a href="{{ post.get_edit_url }}"
-                       class="btn btn-primary btn-sm"
-                       role="button">Edit</a>
-                </div>
+
+                {% if post.created_by == user %}
+                    <div class="mt-3">
+                        <a href="{{ post.get_edit_url }}"
+                           class="btn btn-primary btn-sm"
+                           role="button">Edit</a>
+                    </div>
+                {% endif %}
+
             </div>
         </div>
     </div>

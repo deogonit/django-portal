@@ -25,6 +25,12 @@ class Board(models.Model):
         number = self.get_number_of_topics()
         return True if number else False
 
+    def get_posts_count(self):
+        return Post.objects.filter(topic__board=self).count()
+
+    def get_last_updated_post(self):
+        return Post.objects.filter(topic__board=self).order_by('-updated_at').first()
+
 
 class Topic(models.Model):
     name = models.CharField(max_length=255)

@@ -22,14 +22,33 @@
                     <a href="{{ board.get_absolute_url }}">{{ board.name }}</a>
                     <small class="text-muted d-block">{{ board.description }}</small>
                 </td>
-                <td>
-                    0
+                <td class="align-middle">
+                    {{ board.get_posts_count }}
                 </td>
-                <td>
-                    {{ board.get_number_of_topics}}
+                <td class="align-middle">
+                    {{ board.get_number_of_topics }}
                 </td>
-                <td>
-                    0
+                <td class="align-middle">
+                    {% with post=board.get_last_updated_post%}
+                        {% if post %}
+                            <small>
+                                <a href="{{ post.topic.get_absolute_url }}">
+                                    By {{ post.created_by.username }},
+                                    {% if post.updated_at %}
+                                        {{ post.updated_at }}
+                                    {% else %}
+                                        {{ post.created_at }}
+                                    {% endif %}
+                                </a>
+                            </small>
+                        {% else %}
+                            <small class="text-muted">
+                                <em>
+                                    No tests yet.
+                                </em>
+                            </small>
+                        {% endif %}
+                    {% endwith %}
                 </td>
             </tr>
         {% endfor %}
