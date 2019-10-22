@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block content %}
-{% for post in topic.posts.all %}
+{% for post in posts %}
 <div class="card mb-2 {% if forloop.first %} border-dark {% endif %}">
     {% if forloop.first %}
     <div class="card-header text-white bg-dark py-2 px-3">{{ topic.name }}</div>
@@ -91,17 +91,47 @@
 
 
 <div class="footer">
-
+    {% if posts.has_other_pages %}
     <nav aria-label="Page navigation example" style="float: left">
         <ul class="pagination justify-content-left">
-            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            {% if posts.has_previous %}
+                <li class="page-item">
+                    <a href="?page={{ posts.previous_page_number }}" class="page-link">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+
+            {% for n in posts.paginator.page_range %}
+
+                {% if posts.number == n %}
+                    <li class="page-item active">
+                        <a href="?page={{ n }}" class="page-link">{{ n }}</a>
+                        <span class="sr-only">(current)</span>
+                    </li>
+                {% elif n > posts.number|add:-3 and n < posts.number|add:3 %}
+                    <li class="page-item">
+                        <a href="?page={{ n }}" class="page-link">{{ n }}</a>
+                        <span class="sr-only">(current)</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if posts.has_next %}
+                <li class="page-item">
+                    <a href="?page={{ posts.next_page_number }}" class="page-link">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            {% endif %}
+
         </ul>
     </nav>
-
+    {% endif %}
 
     <div class="reply" style="float:right">
         <a href="{% url 'reply_post' topic.board.slug topic.slug %}" class="btn btn-primary down" role="button">Reply</a>

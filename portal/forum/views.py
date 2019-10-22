@@ -3,6 +3,7 @@ from django.views import View
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 from .models import Board, Topic, Post
 from .forms import NewTopicForm, PostForm
@@ -33,6 +34,11 @@ class BoardTopicsView(View):
 # TODO: 3. For posts.html make a version for mobile (adaptive design)
 # TODO: 8. Make deleting posts for all users (topics and boards for admins or moderator)
 
+def create_page(request, objects):
+    paginator = Paginator(objects, 3)
+    page_number = request.GET.get('page', 1)
+    return paginator.get_page(page_number)
+
 
 class TopicPostsView(View):
     template_name = 'forum/topic_posts.html'
@@ -44,8 +50,13 @@ class TopicPostsView(View):
                                   )
         topic.views += 1
         topic.save()
+        posts = Post.objects.filter(topic=topic)
+        posts = create_page(request, posts)
+
+        print(posts)
         context = {
-            'topic': topic
+            'topic': topic,
+            'posts': posts
         }
         return render(request, self.template_name, context)
 
@@ -137,4 +148,3 @@ class EditPostView(View):
             return redirect('topic_posts', slug=topic.board.slug, topic_slug=topic.slug)
         context = {'post': post, 'form': form}
         return render(request, self.template_name, context)
-
