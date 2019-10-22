@@ -1,0 +1,94 @@
+.post-side {
+    color: #7a869a;
+    padding-right: 30px;
+    padding-left: 30px;
+}
+
+.post-side .poster-avatar {
+    margin-top: 4px;
+    height: 82px;
+    width: 82px;
+    border-radius: 4px;
+}
+
+.media-body, .media-left, .media-right {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.media-left {
+    padding-right: 10px;
+}
+
+.media-body {
+    width: 10000px;
+}
+
+.post-side .media {
+    margin: 0;
+}
+
+.item-title, a.item-title:active, a.item-title:hover, a.item-title:link, a.item-title:visited {
+    color: #172b4d;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.user-title {
+    color: #6200ea;
+    font-size: 14px;
+}
+
+.panel-body {
+    padding-top: 15px;
+}
+
+.post-body {
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+.btn-default, .btn-default.disabled,
+.btn-default.disabled:active, .btn-default.disabled:hover,
+.btn-default:disabled, .btn-default:disabled:hover {
+    background: #ebecf0;
+    border: 1px solid #ebecf0;
+    color: #172b4d;
+    box-shadow: none;
+
+}
+
+.btn-primary, .btn-primary.disabled,
+.btn-primary.disabled:active, .btn-primary.disabled:hover,
+.btn-primary:disabled, .btn-primary:disabled:hover {
+    background: #6554c0;
+    border: 1px solid #6554c0;
+    color: #fff;
+    box-shadow: none;
+}
+
+.col-md-9 {
+    position: relative;
+    width: 100%;
+    padding-right: 30px;
+    padding-left: 10px;
+}
+
+.toolbar {
+
+    margin-left: -15px;
+    margin-right: -15px;
+
+}
+
+.down{
+    width:150px;
+}
+
+.footer {
+    margin-top: 30px;
+}
