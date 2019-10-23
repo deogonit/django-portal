@@ -1,5 +1,11 @@
 {% extends 'forum/base_forum.html'%}
 
+{% load static %}
+
+{% block title %}
+Reply post
+{% endblock%}
+
 {% block breadcrumb %}
     <li class="breadcrumb-item">
         <a href="{% url 'boards' %}">
@@ -25,6 +31,12 @@
 <form method="post">
     {% csrf_token %}
     {% include 'form.html' %}
-    <button type="submit" class="btn btn-success">Post</button>
+    <button type="submit" class="btn btn-success">
+        Post
+    </button>
+    <a href="{{ topic.get_absolute_url }}" class="btn btn-outline-secondary" role="button">
+        Cancel
+    </a>
 </form>
+
 {% endblock %}

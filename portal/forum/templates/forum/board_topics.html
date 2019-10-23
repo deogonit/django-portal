@@ -1,5 +1,10 @@
 {% extends 'forum/base_forum.html'%}
 
+{% block stylesheet %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+
 {% block breadcrumb %}
     <li class="breadcrumb-item">
         <a href="{% url 'boards' %}">
@@ -22,11 +27,19 @@
         </tr>
     </thead>
     <tbody>
-        {% for topic in board.topics.all %}
+        {% for topic in page_objects %}
             <tr>
                 <td>
-                    <a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
+                    <div>
+                        <a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
+                        {% if topic.is_closed %}
+                             <span><i class="fa fa-lock" style="float: right;"></i></span>
+                        {% endif%}
+                    </div>
+
                     <small class="text-muted d-block"></small>
+
+
                 </td>
                 <td>
                     {{ topic.who_started_topic.username }}
@@ -47,8 +60,12 @@
 {% else %}
 
 {% endif %}
-<div class="mb-4">
-    <a href="{% url 'new_topic' board.slug %}" class="btn btn-primary">Start a new topic</a>
+
+<div class="footer">
+    {% include 'pagination.html' %}
+    <div class="reply" style="float:right">
+        <a href="{% url 'new_topic' board.slug %}" class="btn btn-primary down" role="button">Start a new topic</a>
+    </div>
 </div>
 
 {% endblock %}

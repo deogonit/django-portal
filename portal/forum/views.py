@@ -20,24 +20,28 @@ class BoardView(View):
         return render(request, self.template_name, context)
 
 
+def create_page(request, objects, count_of_pages):
+    paginator = Paginator(objects, count_of_pages)
+    page_number = request.GET.get('page', 1)
+    return paginator.get_page(page_number)
+
+
 class BoardTopicsView(View):
     template_name = 'forum/board_topics.html'
 
     def get(self, request, slug):
         board = get_object_or_404(Board, slug__iexact=slug)
+        topics = Topic.objects.filter(board=board)
+        topics = create_page(request, topics, 2)
         context = {
-            'board': board
+            'board': board,
+            'page_objects': topics
         }
         return render(request, self.template_name, context)
 
 
 # TODO: 3. For posts.html make a version for mobile (adaptive design)
 # TODO: 8. Make deleting posts for all users (topics and boards for admins or moderator)
-
-def create_page(request, objects):
-    paginator = Paginator(objects, 3)
-    page_number = request.GET.get('page', 1)
-    return paginator.get_page(page_number)
 
 
 class TopicPostsView(View):
@@ -51,12 +55,10 @@ class TopicPostsView(View):
         topic.views += 1
         topic.save()
         posts = Post.objects.filter(topic=topic)
-        posts = create_page(request, posts)
-
-        print(posts)
+        posts = create_page(request, posts, 3)
         context = {
             'topic': topic,
-            'posts': posts
+            'page_objects': posts
         }
         return render(request, self.template_name, context)
 
@@ -78,6 +80,7 @@ class NewTopicView(View):
         board = get_object_or_404(Board, slug=self.kwargs.get('slug'))
         form = NewTopicForm(request.POST)
         if form.is_valid():
+
             topic = form.save(commit=False)
             topic.board = board
             topic.who_started_topic = request.user

@@ -4,6 +4,8 @@ from django.utils.text import Truncator
 from django.db.models.signals import pre_save
 from portal.utils import unique_slug_generator
 from django.urls import reverse
+from django.utils.html import mark_safe
+from markdown import markdown
 
 
 class Board(models.Model):
@@ -39,6 +41,7 @@ class Topic(models.Model):
     who_started_topic = models.ForeignKey(User, related_name='topics', on_delete=models.CASCADE)
     views = models.PositiveIntegerField(default=0)
     slug = models.SlugField(unique=True, blank=True)
+    is_closed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -50,6 +53,9 @@ class Topic(models.Model):
         if self.posts.count() > 0:
             return self.posts.count() - 1
         return 0
+
+    class Meta:
+        ordering = ['-last_updated']
 
 
 def pre_save_slug(sender, instance, *args, **kwargs):
@@ -77,6 +83,8 @@ class Post(models.Model):
         return reverse('edit_post',
                        kwargs={'slug': self.topic.board.slug, 'topic_slug': self.topic.slug, 'post_number': self.pk})
 
+    def get_message_as_markdown(self):
+        return mark_safe(markdown(self.message, safe_mode='escape'))
 # TODO: 10. Add roles or permutation for group user
 # TODO: 11. Add Likes for posts and in future for news
 # TODO: 12. Add Comments system for news
