@@ -1,6 +1,16 @@
 {% if page_objects.has_other_pages %}
 <nav aria-label="Page navigation example" style="float: left">
     <ul class="pagination justify-content-left">
+        {% if page_objects.number > 1 %}
+            <li class="page-item">
+                <a href="?page=1" class="page-link">First</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">First</span>
+            </li>
+        {% endif %}
+
         {% if page_objects.has_previous %}
         <li class="page-item">
             <a href="?page={{ page_objects.previous_page_number }}" class="page-link">Previous</a>
@@ -35,7 +45,15 @@
             <span class="page-link">Next</span>
         </li>
         {% endif %}
-
+        {% if page_objects.number != page_objects.paginator.num_pages %}
+            <li class="page-item">
+                <a href="?page={{ page_objects.paginator.num_pages }}" class="page-link">Last</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Last</span>
+            </li>
+        {% endif %}
     </ul>
 </nav>
 {% endif %}

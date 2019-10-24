@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.utils.html import mark_safe
 from markdown import markdown
 
+from math import ceil
+
 
 class Board(models.Model):
     name = models.CharField(max_length=30, unique=True)
@@ -53,6 +55,22 @@ class Topic(models.Model):
         if self.posts.count() > 0:
             return self.posts.count() - 1
         return 0
+
+    def get_page_count(self):
+        count = self.posts.count()
+        pages = count / 3
+        return ceil(pages)
+
+    def has_many_pages(self, count=None):
+        if count is None:
+            count = self.get_page_count()
+        return count > 3
+
+    def get_page_range(self):
+        count = self.get_page_count()
+        if self.has_many_pages(count):
+            return range(1, 4)
+        return range(1, count + 1)
 
     class Meta:
         ordering = ['-last_updated']

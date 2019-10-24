@@ -6,55 +6,63 @@
 
 
 {% block breadcrumb %}
-    <li class="breadcrumb-item">
-        <a href="{% url 'boards' %}">
-            Boards
-        </a>
-    </li>
-    <li class="breadcrumb-item active" aria-current="page">{{ board.name }}</li>
+<li class="breadcrumb-item">
+    <a href="{% url 'boards' %}">
+        Boards
+    </a>
+</li>
+<li class="breadcrumb-item active" aria-current="page">{{ board.name }}</li>
 {% endblock %}
 
 {% block content %}
 {% if board.has_board_topics %}
 <table class="table table-striped">
     <thead class="thead-inverse">
-        <tr>
-            <th>Topic</th>
-            <th>Starter</th>
-            <th>Replies</th>
-            <th>Views</th>
-            <th>Last update</th>
-        </tr>
+    <tr>
+        <th>Topic</th>
+        <th>Starter</th>
+        <th>Replies</th>
+        <th>Views</th>
+        <th>Last update</th>
+    </tr>
     </thead>
     <tbody>
-        {% for topic in page_objects %}
-            <tr>
-                <td>
-                    <div>
-                        <a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
-                        {% if topic.is_closed %}
-                             <span><i class="fa fa-lock" style="float: right;"></i></span>
-                        {% endif%}
-                    </div>
+    {% for topic in page_objects %}
+    <tr>
+        <td>
+            <div>
+                <a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
+                {% if topic.is_closed %}
+                <span><i class="fa fa-lock" style="float: right;"></i></span>
+                {% endif%}
+            </div>
 
-                    <small class="text-muted d-block"></small>
+            <small class="text-muted">
+                Pages:
+                {% for n in topic.get_page_range %}
+                    <a href="{{ topic.get_absolute_url }}?page={{ n }}">{{ n }}</a>
+                {% endfor %}
+                {% if topic.has_many_pages %}
+                ... <a href="{{ topic.get_absolute_url }}?page={{ topic.get_page_count }}">Last Page</a>
+                {% endif %}
+            </small>
 
 
-                </td>
-                <td>
-                    {{ topic.who_started_topic.username }}
-                </td>
-                <td>
-                    {{ topic.get_number_replies }}
-                </td>
-                <td>
-                    {{ topic.views }}
-                </td>
-                <td>
-                    {{ topic.last_updated }}
-                </td>
-            </tr>
-        {% endfor %}
+        </td>
+        <td>
+            {{ topic.who_started_topic.username }}
+        </td>
+        <td>
+            {{ topic.get_number_replies }}
+        </td>
+        <td>
+            {{ topic.views }}
+        </td>
+        <td>
+            {{ topic.last_updated }}
+        </td>
+    </tr>
+    {% endfor %}
     </tbody>
 </table>
 {% else %}

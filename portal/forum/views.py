@@ -33,6 +33,7 @@ class BoardTopicsView(View):
         board = get_object_or_404(Board, slug__iexact=slug)
         topics = Topic.objects.filter(board=board)
         topics = create_page(request, topics, 2)
+
         context = {
             'board': board,
             'page_objects': topics
