@@ -1,0 +1,100 @@
+{% extends 'forum/base_forum.html'%}
+
+{% load static %}
+
+{% block title %}
+Delete post
+{% endblock%}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'boards' %}">
+            Boards
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ post.topic.board.get_absolute_url }}">
+           {{ post.topic.board.name }}
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ post.topic.get_absolute_url }}">
+            {{ post.topic.name }}
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Delete post
+    </li>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <h3> Are you sure you want to delete this post</h3>
+    <div class="card mb-2 border-dark " id="post">
+    <div class="card-header text-white bg-dark py-2 px-3">{{ post.topic.name }}</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-12 col-md-3 post-side">
+                <div class="media">
+                    <div class="media-left">
+                        <a href="">
+                            <img class="poster-avatar" src="{% static 'img/empty-avatar.png' %}"
+                                 alt="{{ post.created_by.username }}" width="100"
+                                 height="100">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <div class="media-heading">
+                            <a href="" class="item-title">
+                                {{ post.created_by.username }}
+                            </a>
+                        </div>
+                        <span class="user-title">
+                            User
+                        </span>
+                        <span style="display:block">
+                            {{ post.created_by.posts.count }} posts
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-9" style="margin-bottom: 25px;">
+                <div class="post-heading">
+                    {% if post.updated_at %}
+                    <small class="text-muted">Edited {{ post.updated_at }}</small>
+                    {% else %}
+                    <small class="text-muted">{{ post.created_at }}</small>
+                    {% endif %}
+                </div>
+                <div class="post-body">
+                    <p>
+                        {{ post.get_message_as_markdown }}
+                    </p>
+                </div>
+                <div class="post-footer">
+                    {% if user.is_authenticated %}
+                    <div class="btn btn-success btn-sm" id="like">Like
+
+                        <span id="liked" data-count="like">{{ post.votes.likes.count}}</span>
+                    </div>
+
+                    <div class="btn btn-danger btn-sm" id="dislike">Dislike
+
+                        <span id="disliked" data-count="dislike">{{ post.votes.dislikes.count}}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <button type="submit" name="button" class="btn btn-danger">Delete</button>
+    <a href="{{ post.topic.get_absolute_url }}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+
+{% endblock %}

@@ -46,6 +46,9 @@ Edit post
     <button type="submit" class="btn btn-success">
         Save changes
     </button>
+    <a href="{{ post.get_delete_url }}" class="btn btn-danger" role="button">
+        Delete
+    </a>
     <a href="{{ post.topic.get_absolute_url }}" class="btn btn-outline-secondary" role="button">
         Cancel
     </a>

@@ -23,10 +23,6 @@ class NewTopicTests(TestCase):
         response = self.client.get(url)
         self.assertEquals(response.status_code, 404)
 
-    def test_new_topic_url_resolves_new_topic_view(self):
-        view = resolve('/forum/boards/{}/new_topic'.format(self.board.slug))
-        self.assertEquals(view.func.view_class, NewTopicView)
-
     def test_new_topic_contains_link_to_back_to_boards_topics_view(self):
         new_topic_url = reverse('new_topic', kwargs={'slug': self.board.slug})
         board_topics_url = reverse('board_topics', kwargs={'slug': self.board.slug})

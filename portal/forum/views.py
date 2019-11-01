@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views import View
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -187,3 +187,18 @@ class VotesView(View):
             }),
             content_type="application/json"
         )
+
+
+@method_decorator(login_required, name='dispatch')
+class DeletePostView(View):
+    template_name = 'forum/delete_post.html'
+
+    def get(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, pk=self.kwargs.get('post_number'))
+        context = {'post': post}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        post = Post.objects.get(pk=self.kwargs.get('post_number'))
+        post.delete()
+        return redirect('topic_posts', slug=post.topic.board.slug, topic_slug=post.topic.slug)

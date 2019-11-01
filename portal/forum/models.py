@@ -61,18 +61,18 @@ class Topic(models.Model):
 
     def get_page_count(self):
         count = self.posts.count()
-        pages = count / 3
+        pages = count / 10
         return ceil(pages)
 
     def has_many_pages(self, count=None):
         if count is None:
             count = self.get_page_count()
-        return count > 3
+        return count > 10
 
     def get_page_range(self):
         count = self.get_page_count()
         if self.has_many_pages(count):
-            return range(1, 4)
+            return range(1, 11)
         return range(1, count + 1)
 
     def get_first_post(self):
@@ -127,11 +127,14 @@ class Post(models.Model):
         return reverse('edit_post',
                        kwargs={'slug': self.topic.board.slug, 'topic_slug': self.topic.slug, 'post_number': self.pk})
 
+    def get_delete_url(self):
+        return reverse('delete_post',
+                       kwargs={'slug': self.topic.board.slug, 'topic_slug': self.topic.slug, 'post_number': self.pk})
+
     def get_message_as_markdown(self):
         return mark_safe(markdown(self.message, safe_mode='escape'))
 
 
 
 # TODO: 10. Add roles or permutation for group user
-# TODO: 11. Add Likes for posts and in future for news
 # TODO: 12. Add Comments system for news

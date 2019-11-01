@@ -25,10 +25,6 @@ class ReplyTopicTest(ReplyTopicTestCase):
     def test_status_code(self):
         self.assertEquals(self.response.status_code, 200)
 
-    def test_view_class(self):
-        view = resolve('/forum/boards/{}/topics/{}/reply')
-        self.assertEquals(view.func.view_class, ReplyPostView)
-
     def test_csrf(self):
         self.assertContains(self.response, 'csrfmiddlewaretoken')
 
