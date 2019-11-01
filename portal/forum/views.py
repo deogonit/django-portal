@@ -4,8 +4,10 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-
-from .models import Board, Topic, Post
+from django.http import HttpResponse
+from django.contrib.contenttypes.models import ContentType
+import json
+from .models import Board, Topic, Post, LikeDislike
 from .forms import NewTopicForm, PostForm
 
 
@@ -32,7 +34,7 @@ class BoardTopicsView(View):
     def get(self, request, slug):
         board = get_object_or_404(Board, slug__iexact=slug)
         topics = Topic.objects.filter(board=board)
-        topics = create_page(request, topics, 2)
+        topics = create_page(request, topics, 5)
 
         context = {
             'board': board,
@@ -56,7 +58,7 @@ class TopicPostsView(View):
         topic.views += 1
         topic.save()
         posts = Post.objects.filter(topic=topic)
-        posts = create_page(request, posts, 3)
+        posts = create_page(request, posts, 10)
         context = {
             'topic': topic,
             'page_objects': posts
@@ -81,7 +83,6 @@ class NewTopicView(View):
         board = get_object_or_404(Board, slug=self.kwargs.get('slug'))
         form = NewTopicForm(request.POST)
         if form.is_valid():
-
             topic = form.save(commit=False)
             topic.board = board
             topic.who_started_topic = request.user
@@ -152,3 +153,37 @@ class EditPostView(View):
             return redirect('topic_posts', slug=topic.board.slug, topic_slug=topic.slug)
         context = {'post': post, 'form': form}
         return render(request, self.template_name, context)
+
+
+class VotesView(View):
+    model = None
+    vote_type = None
+
+    def post(self, request, *args, **kwargs):
+        obj_pk = self.kwargs.get('post_number')
+        obj = self.model.objects.get(pk=obj_pk)
+        try:
+            likedislike = LikeDislike.objects.get(content_type=ContentType.objects.get_for_model(obj), object_id=obj.pk,
+                                                  user=request.user)
+
+            if likedislike.vote is not self.vote_type:
+                likedislike.vote = self.vote_type
+                likedislike.save(update_fields=['vote'])
+                result = True
+            else:
+                likedislike.delete()
+                result = False
+        except LikeDislike.DoesNotExist:
+            obj.votes.create(user=request.user, vote=self.vote_type)
+            result = True
+
+        return HttpResponse(
+            json.dumps({
+                "result": result,
+                "like_count": obj.votes.likes().count(),
+                "dislike_count": obj.votes.dislikes().count(),
+                "sum_rating": obj.votes.sum_rating(),
+                'post_number': obj_pk
+            }),
+            content_type="application/json"
+        )

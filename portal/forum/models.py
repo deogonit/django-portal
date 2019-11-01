@@ -6,6 +6,9 @@ from portal.utils import unique_slug_generator
 from django.urls import reverse
 from django.utils.html import mark_safe
 from markdown import markdown
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from .manager import LikeDislikeManager
 
 from math import ceil
 
@@ -72,6 +75,10 @@ class Topic(models.Model):
             return range(1, 4)
         return range(1, count + 1)
 
+    def get_first_post(self):
+        post = self.posts.order_by('created_at').first()
+        return post
+
     class Meta:
         ordering = ['-last_updated']
 
@@ -85,6 +92,24 @@ pre_save.connect(pre_save_slug, sender=Board)
 pre_save.connect(pre_save_slug, sender=Topic)
 
 
+class LikeDislike(models.Model):
+    LIKE = 1
+    DISLIKE = -1
+
+    VOTES = (
+        (LIKE, 'Liked'),
+        (DISLIKE, 'Disliked')
+    )
+
+    vote = models.SmallIntegerField(verbose_name='Vote', choices=VOTES)
+    user = models.ForeignKey(User, verbose_name='User', on_delete=models.CASCADE)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    objects = LikeDislikeManager()
+
+
 class Post(models.Model):
     message = models.TextField(max_length=400)
     topic = models.ForeignKey(Topic, related_name='posts', on_delete=models.CASCADE)
@@ -92,6 +117,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(null=True)
     created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
     updated_by = models.ForeignKey(User, null=True, related_name='+', on_delete=models.CASCADE)
+    votes = GenericRelation(LikeDislike, related_query_name='posts')
 
     def __str__(self):
         truncated_message = Truncator(self.message)
@@ -103,6 +129,9 @@ class Post(models.Model):
 
     def get_message_as_markdown(self):
         return mark_safe(markdown(self.message, safe_mode='escape'))
+
+
+
 # TODO: 10. Add roles or permutation for group user
 # TODO: 11. Add Likes for posts and in future for news
 # TODO: 12. Add Comments system for news

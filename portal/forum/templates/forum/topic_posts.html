@@ -2,6 +2,10 @@
 
 {% load static %}
 
+{% block script %}
+<script src="{% static 'js/topic_posts.js'%}"></script>
+{% endblock %}
+
 {% block stylesheet %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -25,8 +29,8 @@
 
 {% block content %}
 {% for post in page_objects %}
-<div class="card mb-2 {% if forloop.first %} border-dark {% endif %}">
-    {% if forloop.first %}
+<div class="card mb-2 {% if post == topic.get_first_post %} border-dark {% endif %}" id="post">
+    {% if post == topic.get_first_post %}
     <div class="card-header text-white bg-dark py-2 px-3">{{ topic.name }}</div>
     {% endif %}
     <div class="panel-body">
@@ -69,18 +73,34 @@
                     </p>
                 </div>
                 <div class="post-footer">
-                    <a class="btn btn-default btn-sm pull-left" role="button">Like</a>
-                    {% if post.created_by == user and not topic.is_closed %}
+                    {% if user.is_authenticated %}
+                    <div class="btn btn-success btn-sm" id="like"
+                         data-action="like"
+                         data-type="post"
+                         data-id="{{ post.pk }}"
+                         data-topic="{{post.topic.slug}}"
+                         data-board="{{ post.topic.board.slug }}">Like
 
+                        <span id="liked" data-count="like">{{ post.votes.likes.count}}</span>
+                    </div>
+
+                    <div class="btn btn-danger btn-sm" id="dislike"
+                         data-action="dislike"
+                         data-type="post"
+                         data-id="{{ post.pk }}"
+                         data-topic="{{post.topic.slug}}"
+                         data-board="{{ post.topic.board.slug }}">Dislike
+
+                        <span id="disliked" data-count="dislike">{{ post.votes.dislikes.count}}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if post.created_by == user and not topic.is_closed %}
                     <a href="{{ post.get_edit_url }}"
                        class="btn btn-primary btn-sm pull-right"
                        role="button">Edit</a>
-
                     {% endif %}
                 </div>
-
-
-
             </div>
         </div>
     </div>
@@ -92,10 +112,13 @@
     {% include 'pagination.html' %}
     {% if not topic.is_closed %}
     <div class="reply" style="float:right">
-        <a href="{% url 'reply_post' topic.board.slug topic.slug %}" class="btn btn-primary down" role="button">Reply</a>
+        <a href="{% url 'reply_post' topic.board.slug topic.slug %}" class="btn btn-primary down"
+           role="button">Reply</a>
     </div>
     {% endif %}
 </div>
 
+{% block javascript %}
 
+{% endblock %}
 {% endblock%}
