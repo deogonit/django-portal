@@ -110,11 +110,18 @@
 
 <div class="footer">
     {% include 'pagination.html' %}
+    {% if user.is_staff %}
+    <div class="edit">
+        <a href="{{ topic.get_edit_url }}" class="btn btn-info down" role="button">Edit</a>
+    </div>
+    {% endif %}
     {% if not topic.is_closed %}
-    <div class="reply" style="float:right">
+
+    <div class="reply">
         <a href="{% url 'reply_post' topic.board.slug topic.slug %}" class="btn btn-primary down"
            role="button">Reply</a>
     </div>
+
     {% endif %}
 </div>
 

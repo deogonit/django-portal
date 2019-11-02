@@ -97,3 +97,11 @@
     margin-right: 5px;
 }
 
+.footer {
+    display: flex;
+    justify-content: flex-end;
+}
+.reply {
+    margin-left: 25px;
+}
+

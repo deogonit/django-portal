@@ -64,3 +64,22 @@ class PostForm(forms.ModelForm):
         fields = [
             'message',
         ]
+
+
+class EditTopicForm(forms.ModelForm):
+    name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    is_closed = forms.BooleanField(initial=True, required=False)
+
+    class Meta:
+        model = Topic
+        fields = [
+            'name',
+            'is_closed'
+        ]

@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.contrib.contenttypes.models import ContentType
 import json
 from .models import Board, Topic, Post, LikeDislike
-from .forms import NewTopicForm, PostForm, NewBoardForm
+from .forms import NewTopicForm, PostForm, NewBoardForm, EditTopicForm
 
 
 class BoardView(View):
@@ -227,3 +227,44 @@ class DeletePostView(View):
             return redirect('board_topics', slug=topic.board.slug)
         post.delete()
         return redirect('topic_posts', slug=post.topic.board.slug, topic_slug=post.topic.slug)
+
+
+@method_decorator(login_required, name='dispatch')
+class EditTopicView(View):
+    template_name = 'forum/edit_topic.html'
+
+    def get(self, request, *args, **kwargs):
+        topic = get_object_or_404(Topic, slug=self.kwargs.get('topic_slug'))
+        bound_form = EditTopicForm(instance=topic)
+        context = {
+            'topic': topic,
+            'form': bound_form
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        topic = Topic.objects.get(slug=self.kwargs.get('topic_slug'))
+        form = EditTopicForm(request.POST, instance=topic)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.save()
+            return redirect('topic_posts', slug=topic.board.slug, topic_slug=topic.slug)
+        context = {'topic': topic, 'form': form}
+        return render(request, self.template_name, context)
+
+
+@method_decorator(login_required, name='dispatch')
+class DeleteTopicView(View):
+    template_name = 'forum/delete_topic.html'
+
+    def get(self, request, *args, **kwargs):
+        topic = get_object_or_404(Topic, slug=self.kwargs.get('topic_slug'))
+        context = {
+            'topic': topic,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        topic = Topic.objects.get(slug=self.kwargs.get('topic_slug'))
+        topic.delete()
+        return redirect('board_topics', slug=topic.board.slug)

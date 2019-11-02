@@ -11,6 +11,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from .manager import LikeDislikeManager
 
 from math import ceil
+import operator
 
 
 class Board(models.Model):
@@ -57,6 +58,13 @@ class Topic(models.Model):
     def get_absolute_url(self):
         return reverse('topic_posts', kwargs={'slug': self.board.slug, 'topic_slug': self.slug})
 
+    def get_delete_url(self):
+        return reverse('delete_topic', kwargs={'slug': self.board.slug, 'topic_slug': self.slug})
+
+    def get_edit_url(self):
+        return reverse('edit_topic',
+                       kwargs={'slug': self.board.slug, 'topic_slug': self.slug})
+
     def get_number_replies(self):
         if self.posts.count() > 0:
             return self.posts.count() - 1
@@ -81,6 +89,17 @@ class Topic(models.Model):
     def get_first_post(self):
         post = self.posts.order_by('created_at').first()
         return post
+
+    def get_most_popular_user(self):
+        users = {}
+        posts = self.posts.all()
+        for post in posts:
+            if post.created_by not in users:
+                users[post.created_by] = 1
+            else:
+                users[post.created_by] += 1
+        print(users)
+        return max(users.items(), key=operator.itemgetter(1))[0].username
 
     class Meta:
         ordering = ['-last_updated']

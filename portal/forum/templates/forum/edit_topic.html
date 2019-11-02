@@ -1,0 +1,77 @@
+{% extends 'forum/base_forum.html'%}
+
+{% load static %}
+
+{% block title %}
+Edit post
+{% endblock%}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'boards' %}">
+        Boards
+    </a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{{ topic.board.get_absolute_url }}">
+        {{ topic.board.name }}
+    </a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{{ topic.get_absolute_url }}">
+        {{ topic.name }}
+    </a>
+</li>
+<li class="breadcrumb-item active" aria-current="page">
+    Edit topic
+</li>
+{% endblock %}
+
+{% block content %}
+<h3> What do you want to do?</h3>
+<form method="post" class="mb-4" novalidate>
+    {% csrf_token %}
+    {% include 'form.html' %}
+
+    <table class="table table-striped">
+        <thead class="thead-inverse">
+        <tr>
+            <th>Starter</th>
+            <th>Replies</th>
+            <th>Views</th>
+            <th>Last update</th>
+            <th>Popular user</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                {{ topic.who_started_topic.username }}
+            </td>
+            <td>
+                {{ topic.get_number_replies }}
+            </td>
+            <td>
+                {{ topic.views }}
+            </td>
+            <td>
+                {{ topic.last_updated }}
+            </td>
+            <td>
+                {{ topic.get_most_popular_user }}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button type="submit" name="button" class="btn btn-success">Save changes</button>
+    <a href="{{ topic.get_delete_url }}" class="btn btn-danger">Delete</a>
+    <a href="{{ topic.get_absolute_url }}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+{% csrf_token %}
+
+{% endblock %}

@@ -1,57 +1,65 @@
 {% extends 'forum/base_forum.html'%}
-
+{% load static %}
 
 {% block breadcrumb %}
-      <li class="breadcrumb-item active">Boards</li>
+<li class="breadcrumb-item active">Boards</li>
 {% endblock %}
-
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/admin-panel.css' %}">
+{% endblock %}
 {% block content %}
 <table class="table table-striped">
     <thead class="thead-inverse">
-        <tr>
-            <th>Board</th>
-            <th>Posts</th>
-            <th>Topics</th>
-            <th>Last Post</th>
-        </tr>
+    <tr>
+        <th>Board</th>
+        <th>Posts</th>
+        <th>Topics</th>
+        <th>Last Post</th>
+    </tr>
     </thead>
     <tbody>
-        {% for board in boards %}
-            <tr>
-                <td>
-                    <a href="{{ board.get_absolute_url }}">{{ board.name }}</a>
-                    <small class="text-muted d-block">{{ board.description }}</small>
-                </td>
-                <td class="align-middle">
-                    {{ board.get_posts_count }}
-                </td>
-                <td class="align-middle">
-                    {{ board.get_number_of_topics }}
-                </td>
-                <td class="align-middle">
-                    {% with post=board.get_last_updated_post%}
-                        {% if post %}
-                            <small>
-                                <a href="{{ post.topic.get_absolute_url }}">
-                                    By {{ post.created_by.username }},
-                                    {% if post.updated_at %}
-                                        {{ post.updated_at }}
-                                    {% else %}
-                                        {{ post.created_at }}
-                                    {% endif %}
-                                </a>
-                            </small>
-                        {% else %}
-                            <small class="text-muted">
-                                <em>
-                                    No posts yet.
-                                </em>
-                            </small>
-                        {% endif %}
-                    {% endwith %}
-                </td>
-            </tr>
-        {% endfor %}
+    {% for board in boards %}
+    <tr>
+        <td>
+            <a href="{{ board.get_absolute_url }}">{{ board.name }}</a>
+            <small class="text-muted d-block">{{ board.description }}</small>
+        </td>
+        <td class="align-middle">
+            {{ board.get_posts_count }}
+        </td>
+        <td class="align-middle">
+            {{ board.get_number_of_topics }}
+        </td>
+        <td class="align-middle">
+            {% with post=board.get_last_updated_post%}
+            {% if post %}
+            <small>
+                <a href="{{ post.topic.get_absolute_url }}">
+                    By {{ post.created_by.username }},
+                    {% if post.updated_at %}
+                    {{ post.updated_at }}
+                    {% else %}
+                    {{ post.created_at }}
+                    {% endif %}
+                </a>
+            </small>
+            {% else %}
+            <small class="text-muted">
+                <em>
+                    No posts yet.
+                </em>
+            </small>
+            {% endif %}
+            {% endwith %}
+        </td>
+    </tr>
+    {% endfor %}
     </tbody>
 </table>
+{% if user.is_staff %}
+<div class="admin-panel">
+    <a class="btn btn-outline-info" href="/admin">Admin</a>
+    <a class='btn btn-light edit' href="{% url 'new_board'%}"> Create Board</a>
+</div>
+{% endif %}
 {% endblock %}
