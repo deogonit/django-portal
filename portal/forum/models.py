@@ -134,7 +134,8 @@ class Post(models.Model):
     def get_message_as_markdown(self):
         return mark_safe(markdown(self.message, safe_mode='escape'))
 
-
+    class Meta:
+        ordering = ['pk']
 
 # TODO: 10. Add roles or permutation for group user
 # TODO: 12. Add Comments system for news
