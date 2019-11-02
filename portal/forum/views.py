@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.contrib.contenttypes.models import ContentType
 import json
 from .models import Board, Topic, Post, LikeDislike
-from .forms import NewTopicForm, PostForm
+from .forms import NewTopicForm, PostForm, NewBoardForm
 
 
 class BoardView(View):
@@ -63,6 +63,26 @@ class TopicPostsView(View):
             'topic': topic,
             'page_objects': posts
         }
+        return render(request, self.template_name, context)
+
+
+@method_decorator(login_required, name='dispatch')
+class NewBoardView(View):
+    template_name = 'forum/new_board.html'
+
+    def get(self, request, *args, **kwargs):
+        form = NewBoardForm()
+        context = {
+            'form': form
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        form = NewBoardForm(request.POST)
+        if form.is_valid():
+            board = form.save()
+            return redirect('boards')
+        context = {'form': form}
         return render(request, self.template_name, context)
 
 
@@ -200,5 +220,10 @@ class DeletePostView(View):
 
     def post(self, request, *args, **kwargs):
         post = Post.objects.get(pk=self.kwargs.get('post_number'))
+        topic = post.topic
+        if topic.posts.count() == 1:
+            post.delete()
+            topic.delete()
+            return redirect('board_topics', slug=topic.board.slug)
         post.delete()
         return redirect('topic_posts', slug=post.topic.board.slug, topic_slug=post.topic.slug)

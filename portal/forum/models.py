@@ -24,6 +24,9 @@ class Board(models.Model):
     def get_absolute_url(self):
         return reverse('board_topics', kwargs={'slug': self.slug})
 
+    def get_delete_url(self):
+        return reverse('board_delete', kwargs={'slug': self.slug})
+
     def get_number_of_topics(self):
         board = Board.objects.get(slug=self.slug)
         return len(board.topics.all())

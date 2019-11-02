@@ -1,5 +1,34 @@
 from django import forms
-from .models import Topic, Post
+from .models import Topic, Post, Board
+
+
+class NewBoardForm(forms.ModelForm):
+    name = forms.CharField(
+        max_length=30,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+
+    description = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'rows': 4,
+                'class': 'form-control',
+                'placeholder': 'Enter description your\'s board'
+            }),
+        max_length=100,
+
+    )
+
+    class Meta:
+        model = Board
+        fields = [
+            'name',
+            'description'
+        ]
 
 
 class NewTopicForm(forms.ModelForm):
