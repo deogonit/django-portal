@@ -43,10 +43,6 @@ class BoardTopicsView(View):
         return render(request, self.template_name, context)
 
 
-# TODO: 3. For posts.html make a version for mobile (adaptive design)
-# TODO: 8. Make deleting posts for all users (topics and boards for admins or moderator)
-
-
 class TopicPostsView(View):
     template_name = 'forum/topic_posts.html'
 

@@ -37,11 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
 
-    # TODO: 4. ADD new app 'Accounts'
+    'accounts',
+    'forum'
     # TODO: 5. ADD new app 'Tags'
     # TODO: 6. ADD new app 'News'
-
-    'forum'
 ]
 
 MIDDLEWARE = [
