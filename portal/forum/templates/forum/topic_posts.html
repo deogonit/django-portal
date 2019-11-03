@@ -110,11 +110,6 @@
 
 <div class="footer">
     {% include 'pagination.html' %}
-    {% if user.is_staff %}
-    <div class="edit">
-        <a href="{{ topic.get_edit_url }}" class="btn btn-info down" role="button">Edit</a>
-    </div>
-    {% endif %}
     {% if not topic.is_closed %}
 
     <div class="reply">
@@ -128,4 +123,17 @@
 {% block javascript %}
 
 {% endblock %}
+
+{% block admin %}
+    <div class="admin-panel">
+        {% if user.is_staff %}
+            <a class="btn btn-outline-info" href="/admin">Admin</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+            <a href="{{ topic.get_edit_url }}" class="btn btn-outline-dark down" role="button">Edit topic</a>
+            <a href="{{ topic.get_delete_url }}" class="btn btn-outline-danger">Delete topic</a>
+        {% endif %}
+    </div>
+{% endblock %}
+
 {% endblock%}

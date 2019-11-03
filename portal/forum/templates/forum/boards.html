@@ -56,10 +56,14 @@
     {% endfor %}
     </tbody>
 </table>
+
+{% block admin %}
 {% if user.is_staff %}
 <div class="admin-panel">
     <a class="btn btn-outline-info" href="/admin">Admin</a>
     <a class='btn btn-light edit' href="{% url 'new_board'%}"> Create Board</a>
 </div>
 {% endif %}
+{% endblock %}
+
 {% endblock %}

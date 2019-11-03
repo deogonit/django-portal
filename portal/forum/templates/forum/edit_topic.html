@@ -36,7 +36,6 @@ Edit post
 <form method="post" class="mb-4" novalidate>
     {% csrf_token %}
     {% include 'form.html' %}
-
     <table class="table table-striped">
         <thead class="thead-inverse">
         <tr>
@@ -69,9 +68,6 @@ Edit post
     </table>
 
     <button type="submit" name="button" class="btn btn-success">Save changes</button>
-    <a href="{{ topic.get_delete_url }}" class="btn btn-danger">Delete</a>
     <a href="{{ topic.get_absolute_url }}" class="btn btn-outline-secondary">Cancel</a>
 </form>
-{% csrf_token %}
-
 {% endblock %}
