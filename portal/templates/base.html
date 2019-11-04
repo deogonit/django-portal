@@ -31,8 +31,8 @@
 </head>
 
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+{% block base %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="{% url 'main_site' %}">Portal</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,9 +75,10 @@
 
     {% endblock %}
 </div>
-{% block javascript %}
 
+{% block javascript %}
 {% endblock %}
 
+{% endblock %}
 </body>
 </html>

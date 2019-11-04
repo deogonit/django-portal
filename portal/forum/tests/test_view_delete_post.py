@@ -54,7 +54,7 @@ class SuccessfulDeletePostTests(DeletePostTestCase):
         self.response = self.client.post(self.url, data)
 
     def test_redirection(self):
-        topic_post_url = reverse('topic_posts', kwargs={'slug': self.board.slug, 'topic_slug': self.topic.slug})
+        topic_post_url = reverse('board_topics', kwargs={'slug': self.board.slug})
         self.assertRedirects(self.response, topic_post_url)
 
     def test_exist_post(self):

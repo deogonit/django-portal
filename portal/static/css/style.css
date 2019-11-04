@@ -81,9 +81,6 @@
 .down{
     width:150px;
 }
-.reply {
-    margin-left: 50px;
-}
 
 .footer {
     margin: 30px 0 5px;
@@ -111,4 +108,10 @@
 
 .admin-panel:hover {
     opacity: 1;
+}
+
+#id_is_closed {
+    width: 0;
+    height: 0;
+    display: inline;
 }
