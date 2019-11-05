@@ -1,3 +1,7 @@
+.user-link {
+  color: white !important;
+  text-decoration: none
+}
 .post-side {
     color: #7a869a;
     padding-right: 30px;
@@ -91,7 +95,9 @@
 #like, #dislike {
     margin-right: 15px;
 }
-
+.reply {
+    margin-right: 35px;
+}
 .admin-panel {
     border: 1px solid #999;
     border-radius: 15px;

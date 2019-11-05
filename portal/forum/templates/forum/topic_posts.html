@@ -109,15 +109,14 @@
 
 
 <div class="footer">
-    {% include 'pagination.html' %}
     {% if not topic.is_closed %}
-
     <div class="reply">
         <a href="{% url 'reply_post' topic.board.slug topic.slug %}" class="btn btn-primary down"
            role="button">Reply</a>
     </div>
-
     {% endif %}
+
+    {% include 'pagination.html' %}
 </div>
 
 {% block javascript %}
