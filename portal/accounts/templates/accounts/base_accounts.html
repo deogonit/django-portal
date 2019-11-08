@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% load widget_tweaks %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+{% endblock %}
+
+
+{% block base %}
+
+<div class="container">
+    <h1 class="text-center logo my-4">
+        <a href="{% url 'main_site' %}">Portal</a>
+    </h1>
+    {% block content%}
+    {% endblock %}
+</div>
+
+{% endblock %}
