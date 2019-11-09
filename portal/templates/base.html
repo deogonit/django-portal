@@ -20,6 +20,7 @@
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css'%}">
     <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
     {% block stylesheet %}
 
@@ -61,7 +62,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="#">My account</a>
-                <a class="dropdown-item" href="#">Change password</a>
+                <a class="dropdown-item" href="">Change password</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
             </div>
