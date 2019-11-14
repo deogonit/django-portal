@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import AbstractUser
 
 
 def upload_location(instance, filename):
@@ -14,6 +15,8 @@ class UserProfile(models.Model):
                                default='empty-avatar.png', upload_to=upload_location)
     width_field = models.IntegerField(default=0)
     height_field = models.IntegerField(default=0)
+    is_administrator = models.BooleanField(default=False)
+    is_moderator = models.BooleanField(default=False)
 
 
 @receiver(post_save, sender=User)
@@ -25,3 +28,4 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+

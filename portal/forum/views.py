@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 import json
 from .models import Board, Topic, Post, LikeDislike
 from .forms import NewTopicForm, PostForm, NewBoardForm, EditTopicForm
+from .decorators import moderator_required
 
 
 class BoardView(View):
@@ -62,7 +63,7 @@ class TopicPostsView(View):
         return render(request, self.template_name, context)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator([login_required, moderator_required], name='dispatch')
 class NewBoardView(View):
     template_name = 'forum/new_board.html'
 
@@ -225,7 +226,7 @@ class DeletePostView(View):
         return redirect('topic_posts', slug=post.topic.board.slug, topic_slug=post.topic.slug)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator([login_required, moderator_required], name='dispatch')
 class EditTopicView(View):
     template_name = 'forum/edit_topic.html'
 
@@ -249,7 +250,7 @@ class EditTopicView(View):
         return render(request, self.template_name, context)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator([login_required, moderator_required], name='dispatch')
 class DeleteTopicView(View):
     template_name = 'forum/delete_topic.html'
 
