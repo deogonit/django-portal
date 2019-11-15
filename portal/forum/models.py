@@ -158,5 +158,3 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['pk']
-
-# TODO: Add roles or permutation for group user

@@ -1,13 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.views.generic import UpdateView
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.urls import reverse_lazy
+from django.core.paginator import Paginator
 
-from .forms import SignUpForm, UserForm, ProfileForm
+from .forms import SignUpForm, UserForm, ProfileForm, SuperUserChangeRoleForm, AdminModerChangeRoleForm
 
 
 class SignUpView(View):
@@ -34,7 +33,7 @@ class UserUpdateView(View):
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username=request.user)
         user_form = UserForm(instance=user)
-        profile_form = ProfileForm()
+        profile_form = ProfileForm(instance=user.profile)
         context = {
             'user_form': user_form,
             'profile_form': profile_form,
@@ -54,5 +53,60 @@ class UserUpdateView(View):
             'user_form': user_form,
             'profile_form': profile_form,
             'user': user
+        }
+        return render(request, self.template_name, context)
+
+
+def create_page(request, objects, count_of_pages):
+    paginator = Paginator(objects, count_of_pages)
+    page_number = request.GET.get('page', 1)
+    return paginator.get_page(page_number)
+
+
+class ListUsersView(View):
+    template_name = 'accounts/users.html'
+
+    def get(self, request, *args, **kwargs):
+        users = User.objects.all().order_by('pk')
+        users = create_page(request, users, 10)
+        context = {'page_objects': users}
+        return render(request, self.template_name, context)
+
+
+class ProfileView(View):
+    template_name = 'accounts/account.html'
+
+    def get(self, request, *args, **kwargs):
+        form = None
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        if request.user.is_superuser:
+            form = SuperUserChangeRoleForm(instance=user.profile)
+        elif request.user.profile.is_moderator or user.profile.is_administrator:
+            form = AdminModerChangeRoleForm(instance=user.profile)
+
+
+        context = {
+            'user_info': user,
+            'form': form
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        form = None
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        if request.user.is_superuser:
+            form = SuperUserChangeRoleForm(request.POST, instance=user.profile)
+        elif request.user.profile.is_moderator or request.user.profile.is_administrator:
+            form = AdminModerChangeRoleForm(request.POST, instance=user.profile)
+        if form is not None and form.is_valid():
+            user_profile = form.save(commit=False)
+            is_admin = form.cleaned_data['is_administrator']
+            if is_admin:
+                user_profile.is_moderator = True
+            user_profile.save()
+            return redirect('user_profile', username=user.username)
+        context = {
+            'user_info': user,
+            'form': form
         }
         return render(request, self.template_name, context)

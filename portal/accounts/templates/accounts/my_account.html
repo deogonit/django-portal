@@ -18,7 +18,7 @@ My account
             {% csrf_token %}
             <div class="row">
                 <div class="col-4">
-                    <img src="{{ user.profile.avatar.url }}" width="350px" height="350px" alt="">
+                    <img src="{{ user.profile.avatar.url }}" width="100%" alt="">
                 </div>
                 <div class="col-8">
                     {% with form=user_form %}

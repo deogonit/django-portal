@@ -3,7 +3,7 @@ from .views import SignUpView
 from django.contrib.auth.views import LogoutView, LoginView, PasswordResetView, PasswordResetDoneView, \
     PasswordResetCompleteView, PasswordResetConfirmView, PasswordChangeView, PasswordChangeDoneView
 
-from .views import UserUpdateView
+from .views import UserUpdateView, ListUsersView, ProfileView
 
 account_patterns = ([
     path('settings', UserUpdateView.as_view(), name='settings'),
@@ -18,6 +18,8 @@ account_patterns = ([
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('users/', ListUsersView.as_view(), name='users'),
+    path('users/<str:username>/', ProfileView.as_view(), name='user_profile'),
     path('login/', LoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('reset/', PasswordResetView.as_view(
         template_name='accounts/password_reset.html',

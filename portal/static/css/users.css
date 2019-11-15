@@ -1,0 +1,9 @@
+.table td {
+    vertical-align: middle;
+}
+
+img {
+    border-radius: 2px;
+    height: 64px;
+    width: 64px;
+}

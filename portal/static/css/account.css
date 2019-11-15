@@ -1,0 +1,14 @@
+#id_is_administrator, #id_is_moderator {
+    width: 0;
+    height: 0;
+    display: inline;
+}
+
+form {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+}
+.form-group {
+    display: inline;
+}

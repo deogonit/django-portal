@@ -37,8 +37,39 @@ class UserForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
-    avatar = forms.ImageField(required=False,)
+    avatar = forms.ImageField(required=False, widget=forms.FileInput())
+    description = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'rows': 4,
+                'class': 'form-control',
+                'placeholder': 'Enter description about yourself'
+            }),
+        max_length=100,
+
+    )
 
     class Meta:
         model = UserProfile
-        fields = ('avatar',)
+        fields = ('avatar', 'description')
+
+
+class SuperUserChangeRoleForm(forms.ModelForm):
+    is_administrator = forms.BooleanField(required=False)
+    is_moderator = forms.BooleanField(required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ['is_administrator', 'is_moderator']
+        labels = {
+            'is_administrator': 'Admin',
+            'is_moderator': 'Moder'
+        }
+
+
+class AdminModerChangeRoleForm(forms.ModelForm):
+    is_moderator = forms.BooleanField(initial=True, required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ['is_moderator', ]

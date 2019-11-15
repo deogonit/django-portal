@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/account.css'%}">
+{% endblock %}
+
+{% block body %}
+<nav class="mt-3 mb-4" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'users' %}">Users</a>
+        </li>
+        <li class="breadcrumb-item active">
+            {{ user_info.username }}
+        </li>
+    </ol>
+</nav>
+<div class="row">
+    <div class="col-4">
+        <img src="{{ user_info.profile.avatar.url }}" width="100%" height="100%" alt="">
+    </div>
+    <div class="col-8">
+        <ul class="list-group ">
+                <li class="list-group-item">Username: {{ user_info.username }}</li>
+            {% if user_info.first_name %}
+                <li class="list-group-item">First name: {{ user_info.first_name }}</li>
+            {% endif %}
+            {% if user_info.last_name %}
+                <li class="list-group-item">Last name: {{ user_info.last_name}}</li>
+            {% endif %}
+            {% if user_info.email %}
+                <li class="list-group-item">Email: {{ user_info.email}}</li>
+            {% endif %}
+            <li class="list-group-item">Last login: {{ user_info.last_login}}</li>
+            <li class="list-group-item">Role: {{ user_info.profile.get_role_user}}</li>
+            {% if user_info.description %}
+                <li class="list-group-item">Description: {{ user_info.profile.description }}</li>
+            {% endif %}
+        </ul>
+
+        {% if request.user.is_superuser or request.user.profile.is_administrator and not user_info.is_superuser %}
+        <form method="post">
+            {% csrf_token %}
+            {% include 'form.html' %}
+            <button type="submit" class="btn btn-success">Save changes</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% if request.user == user_info %}
+<a type="button" class="btn btn-secondary" href="{% url 'settings' %}">Secondary</a>
+{% endif %}
+{% endblock %}

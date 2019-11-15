@@ -17,6 +17,14 @@ class UserProfile(models.Model):
     height_field = models.IntegerField(default=0)
     is_administrator = models.BooleanField(default=False)
     is_moderator = models.BooleanField(default=False)
+    description = models.CharField(max_length=100, blank=True)
+
+    def get_role_user(self):
+        if self.is_administrator:
+            return 'Administrator'
+        if self.is_moderator:
+            return 'Moderator'
+        return 'User'
 
 
 @receiver(post_save, sender=User)
