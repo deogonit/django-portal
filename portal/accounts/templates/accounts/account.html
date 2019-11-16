@@ -53,7 +53,9 @@ Users
         {% endif %}
     </div>
 </div>
+
 {% if request.user == user_info %}
-<a type="button" class="btn btn-secondary" href="{% url 'settings' %}">Secondary</a>
+    <a type="button" class="btn btn-secondary" href="{% url 'settings' %}">Change profile</a>
 {% endif %}
+
 {% endblock %}

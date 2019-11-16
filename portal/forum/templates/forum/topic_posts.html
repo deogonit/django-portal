@@ -3,12 +3,13 @@
 {% load static %}
 
 {% block script %}
-<script src="{% static 'js/topic_posts.js'%}"></script>
+    <script src="{% static 'js/topic_posts.js'%}"></script>
 {% endblock %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_panel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/post.css' %}">
 {% endblock %}
 
 {% block breadcrumb %}
@@ -38,7 +39,7 @@
             <div class="col-xs-12 col-md-3 post-side">
                 <div class="media">
                     <div class="media-left">
-                        <a href="">
+                        <a href="{% url 'user_profile' post.created_by.username %}">
                             <img class="poster-avatar" src="{{ post.created_by.profile.avatar.url }}"
                                  alt="{{ post.created_by.username }}" width="100"
                                  height="100">
@@ -46,12 +47,12 @@
                     </div>
                     <div class="media-body">
                         <div class="media-heading">
-                            <a href="" class="item-title">
+                            <a href="{% url 'user_profile' post.created_by.username %}" class="item-title">
                                 {{ post.created_by.username }}
                             </a>
                         </div>
                         <span class="user-title">
-                            User
+                            {{ post.created_by.profile.get_role_user }}
                         </span>
                         <span style="display:block">
                             {{ post.created_by.posts.count }} posts
@@ -119,10 +120,6 @@
     {% include 'pagination.html' %}
 </div>
 
-{% block javascript %}
-
-{% endblock %}
-
 {% block admin %}
     {% if request.user.profile.is_administrator or request.user.profile.is_moderator %}
     <div class="admin-panel">
@@ -134,7 +131,6 @@
         <a href="{{ topic.get_delete_url }}" class="btn btn-outline-danger">Delete topic</a>
     </div>
     {% endif %}
-
 {% endblock %}
 
 {% endblock%}

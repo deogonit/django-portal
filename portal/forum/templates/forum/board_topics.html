@@ -1,8 +1,10 @@
 {% extends 'forum/base_forum.html'%}
 
 {% load static %}
+
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
 {% endblock %}
 
 
@@ -76,5 +78,4 @@
         <a href="{% url 'new_topic' board.slug %}" class="btn btn-primary down" role="button">Start a new topic</a>
     </div>
 </div>
-
 {% endblock %}

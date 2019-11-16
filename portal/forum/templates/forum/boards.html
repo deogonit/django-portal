@@ -6,7 +6,8 @@
 {% endblock %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_panel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -60,15 +61,14 @@
 </table>
 
 {% block admin %}
-{% if request.user.profile.is_administrator or request.user.profile.is_moderator %}
-<div class="admin-panel">
-    {% if request.user.profile.is_administrator %}
-        <a class="btn btn-outline-info" href="/admin">Admin</a>
+    {% if request.user.profile.is_administrator or request.user.profile.is_moderator %}
+    <div class="admin-panel">
+        {% if request.user.profile.is_administrator %}
+            <a class="btn btn-outline-info" href="/admin">Admin</a>
+        {% endif %}
+        <a class='btn btn-light edit' href="{% url 'new_board'%}"> Create Board</a>
+    </div>
     {% endif %}
-    <a class='btn btn-light edit' href="{% url 'new_board'%}"> Create Board</a>
-</div>
-{% endif %}
-
 {% endblock %}
 
 {% endblock %}
