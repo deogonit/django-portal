@@ -2,13 +2,14 @@
     width: 0;
     height: 0;
     display: inline;
-}
-
-form {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
+    position: absolute;
+    right: 25px;
 }
 .form-group {
-    display: inline;
+    margin-bottom: 0;
+}
+.post {
+    margin-bottom: 0;
+    padding-top: 10px;
+    border-bottom: 4px solid #eee;
 }

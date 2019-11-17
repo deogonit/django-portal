@@ -22,40 +22,185 @@ Users
     </ol>
 </nav>
 <div class="row">
-    <div class="col-4">
-        <img src="{{ user_info.profile.avatar.url }}" width="100%" height="100%" alt="">
-    </div>
-    <div class="col-8">
-        <ul class="list-group ">
-                <li class="list-group-item">Username: {{ user_info.username }}</li>
-            {% if user_info.first_name %}
-                <li class="list-group-item">First name: {{ user_info.first_name }}</li>
-            {% endif %}
-            {% if user_info.last_name %}
-                <li class="list-group-item">Last name: {{ user_info.last_name}}</li>
-            {% endif %}
-            {% if user_info.email %}
-                <li class="list-group-item">Email: {{ user_info.email}}</li>
-            {% endif %}
-            <li class="list-group-item">Last login: {{ user_info.last_login}}</li>
-            <li class="list-group-item">Role: {{ user_info.profile.get_role_user}}</li>
-            {% if user_info.description %}
-                <li class="list-group-item">Description: {{ user_info.profile.description }}</li>
-            {% endif %}
-        </ul>
+    <div class="col-md-3">
+        <div class="mb-3">
+            <div class="card">
+                <div class="profile-avatar">
+                    <img src="{{ user_info.profile.avatar.url }}" width="100%" height="250px" alt="">
+                </div>
+                <div class="profile-username">
+                    <h3 class="my-3 text-center text muted">
+                        {{ user_info.username }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+        {% if request.user == user_info %}
+        <a type="button" class="btn btn-block btn-secondary" href="{% url 'settings' %}">Change profile</a>
+        {% endif %}
 
         {% if request.user.is_superuser or request.user.profile.is_administrator and not user_info.is_superuser %}
-        <form method="post">
-            {% csrf_token %}
-            {% include 'form.html' %}
-            <button type="submit" class="btn btn-success">Save changes</button>
-        </form>
+        <div class="mt-3">
+            <div class="card">
+                <div class="card-header">
+                    Choose role user
+                </div>
+                <form method="post">
+                    <div class="card-body">
+                        {% csrf_token %}
+                        {% include 'form.html' %}
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-block btn-success">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
         {% endif %}
+
     </div>
+    <div class="col-md-9">
+        <div class="mb-3 row">
+            <div class="col-md-12">
+                <div class="profile-content">
+                    <div class="card">
+                        <div class="card-header">
+                            Profile info
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 divider text-center">
+                                    <div class="row">
+                                        {% if user_info.first_name %}
+                                        <div class="col-12 col-sm-4 mb-3">
+                                            <h4>
+                                                {{ user_info.first_name }}
+                                            </h4>
+                                            <p class="mb-1"><small>First name</small></p>
+                                        </div>
+                                        {% endif %}
+                                        {% if user_info.last_name %}
+                                        <div class="col-12 col-sm-4 mb-3">
+                                            <h4>
+                                                {{ user_info.last_name }}
+                                            </h4>
+                                            <p class="mb-1"><small>Last name</small></p>
+                                        </div>
+                                        {% endif %}
+                                        <div class="col-12 col-sm-4 mb-3">
+                                            <h4>
+                                                {{ user_info.profile.get_role_user }}
+                                            </h4>
+                                            <p class="mb-1"><small>Role</small></p>
+                                        </div>
+                                        {% if user_info.email %}
+                                        <div class="col-12 col-sm-4 ">
+                                            <h4>
+                                                {{ user_info.email }}
+                                            </h4>
+                                            <p class="mb-1"><small>Email</small></p>
+                                        </div>
+                                        {% endif %}
+                                        <div class="col-12 col-sm-4 ">
+                                            <h4>
+                                                {{ user_info.last_login }}
+                                            </h4>
+                                            <p class="mb-1"><small>Last login</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if user_info.profile.description %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="description">
+                    <div class="card">
+                        <div class="card-header">
+                            Description
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>
+                                        {{ user_info.profile.description }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="mt-3 row">
+            <div class="col-md-12">
+                <div class="profile-content">
+                    <div class="card">
+                        <div class="card-header">Statistic</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 divider text-center">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-6">
+                                            <h4>
+                                                {{ user_info.posts.count }}
+                                            </h4>
+                                            <p class="mb-1"><small>Posts</small></p>
+                                        </div>
+                                        <div class="col-12 col-sm-6">
+                                            <h4>
+                                                {{ user_info.topics.count }}
+                                            </h4>
+                                            <p class="mb-1"><small>Topics</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 row">
+            <div class="col-md-12">
+                <div class="profile-content">
+                    <div class="card">
+                        <div class="card-header">Recent posts</div>
+                        <div class="card-body">
+                            {% for post in posts %}
+                            <div class="row post">
+                                <div class="col-md-12">
+                                    <div class="post-title">
+                                        <a href="{{ post.topic.get_absolute_url}}?page={{post.get_page}}#{{ post.pk }}">
+                                            {{ post.topic.name}}
+                                        </a>
+                                    </div>
+                                    <p>
+                                        {% if post.updated_at %}
+                                        <small class="text-muted">Edited {{ post.updated_at }}</small>
+                                        {% else %}
+                                        <small class="text-muted">{{ post.created_at }}</small>
+                                        {% endif %}
+                                    </p>
+                                    <div class="post-content">
+                                        <p>{{ post.get_message_as_markdown }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-{% if request.user == user_info %}
-    <a type="button" class="btn btn-secondary" href="{% url 'settings' %}">Change profile</a>
-{% endif %}
 
 {% endblock %}

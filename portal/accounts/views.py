@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator
 
 from .forms import SignUpForm, UserForm, ProfileForm, SuperUserChangeRoleForm, AdminModerChangeRoleForm
+from forum.models import Post
 
 
 class SignUpView(View):
@@ -22,13 +23,13 @@ class SignUpView(View):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('main_site')
+            return redirect('boards')
         return render(request, self.template_name, {'form': form})
 
 
 @method_decorator(login_required, name='dispatch')
 class UserUpdateView(View):
-    template_name = 'accounts/my_account.html'
+    template_name = 'accounts/change_my_account.html'
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username=request.user)
@@ -48,7 +49,7 @@ class UserUpdateView(View):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            return redirect('main_site')
+            return redirect('boards')
         context = {
             'user_form': user_form,
             'profile_form': profile_form,
@@ -79,21 +80,23 @@ class ProfileView(View):
     def get(self, request, *args, **kwargs):
         form = None
         user = get_object_or_404(User, username=self.kwargs.get('username'))
+        posts = self.get_ten_posts(user)
         if request.user.is_superuser:
             form = SuperUserChangeRoleForm(instance=user.profile)
         elif request.user.profile.is_moderator or user.profile.is_administrator:
             form = AdminModerChangeRoleForm(instance=user.profile)
 
-
         context = {
             'user_info': user,
-            'form': form
+            'form': form,
+            'posts': posts
         }
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = None
         user = get_object_or_404(User, username=self.kwargs.get('username'))
+        posts = self.get_ten_posts(user)
         if request.user.is_superuser:
             form = SuperUserChangeRoleForm(request.POST, instance=user.profile)
         elif request.user.profile.is_moderator or request.user.profile.is_administrator:
@@ -107,6 +110,11 @@ class ProfileView(View):
             return redirect('user_profile', username=user.username)
         context = {
             'user_info': user,
-            'form': form
+            'form': form,
+            'posts': posts
         }
         return render(request, self.template_name, context)
+
+    def get_ten_posts(self, user):
+        posts = Post.objects.filter(created_by=user).order_by('-created_at')
+        return posts[:10] if len(posts) > 10 else posts[:]

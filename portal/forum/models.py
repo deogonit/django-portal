@@ -9,7 +9,7 @@ from markdown import markdown
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from .manager import LikeDislikeManager
-
+from django.core.paginator import Paginator
 from math import ceil
 import operator
 
@@ -155,6 +155,18 @@ class Post(models.Model):
 
     def get_message_as_markdown(self):
         return mark_safe(markdown(self.message, safe_mode='escape'))
+
+    def get_page(self):
+        posts = self.topic.posts.all()
+        paginator = Paginator(posts, 10)
+        for index_page in range(1, paginator.num_pages + 1):
+            page = paginator.get_page(index_page)
+            try:
+                page[:].index(self)
+            except ValueError:
+                pass
+            else:
+                return index_page
 
     class Meta:
         ordering = ['pk']
